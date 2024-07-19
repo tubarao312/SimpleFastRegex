@@ -48,8 +48,8 @@ impl RegexEngine {
 }
 
 #[pymodule]
-#[pyo3(name = "simple_fast_regex")]
-fn simple_fast_regex(m: &Bound<'_, PyModule>) -> PyResult<()> {
+#[pyo3(name = "SimpleFastRegex")]
+fn SimpleFastRegex(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<RegexEngine>()?;
     Ok(())
 }
