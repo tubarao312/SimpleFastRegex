@@ -3,8 +3,9 @@ use rayon::prelude::*;
 use regex::Regex;
 
 /// This item will get inited with a list of patterns from the JSON file.
-#[pyclass]
+#[pyclass(name = "RegexEngine")]
 pub struct RegexEngine {
+    raw_patterns: Vec<String>,
     compiled_patterns: Vec<Regex>,
 }
 
@@ -23,7 +24,19 @@ impl RegexEngine {
             .filter_map(|pattern| Regex::new(pattern).ok())
             .collect();
 
-        RegexEngine { compiled_patterns }
+        RegexEngine {
+            raw_patterns,
+            compiled_patterns,
+        }
+    }
+
+    /// Returns the raw patterns that were compiled.
+    ///
+    /// ### Returns
+    /// A list of raw patterns.
+    #[getter]
+    fn get_raw_patterns(&self) -> Vec<String> {
+        self.raw_patterns.clone()
     }
 
     /// Runs the compiled patterns against the provided content.
