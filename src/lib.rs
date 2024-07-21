@@ -18,24 +18,51 @@ impl RegexEngine {
     /// ### Arguments
     /// * `raw_patterns` - A list of raw Regex patterns to compile.
     #[new]
-    fn new(raw_patterns: Vec<String>) -> Self {
-        let compiled_patterns: Vec<Regex> = raw_patterns
+    fn new() -> Self {
+        RegexEngine {
+            raw_patterns: Vec::new(),
+            compiled_patterns: Vec::new(),
+        }
+    }
+
+    /// Adds a list of patterns to the `RegexEngine` object.
+    /// The patterns are compiled and stored in the object.
+    ///
+    /// ### Arguments
+    /// * `patterns` - A list of raw Regex patterns to compile.
+    /// * `escape` - A boolean flag to escape the patterns before compiling.
+    ///
+    /// ### Returns
+    /// The number of patterns that were successfully compiled.
+    fn add_patterns(&mut self, patterns: Vec<String>, escape: bool) -> PyResult<usize> {
+        let compiled_patterns: Vec<Regex> = patterns
             .par_iter()
-            .filter_map(|pattern| Regex::new(pattern).ok())
+            .filter_map(|pattern| {
+                let pattern = if escape {
+                    regex::escape(pattern)
+                } else {
+                    pattern.clone()
+                };
+                Regex::new(&pattern).ok()
+            })
             .collect();
 
-        RegexEngine {
-            raw_patterns,
-            compiled_patterns,
-        }
+        let total_compiled_patterns: usize = compiled_patterns.len();
+
+        self.raw_patterns.extend(patterns);
+        self.compiled_patterns.extend(compiled_patterns);
+
+        Ok(total_compiled_patterns)
     }
 
     /// Returns the raw patterns that were compiled.
     ///
     /// ### Returns
-    /// A list of raw patterns.
+    /// A list of raw patterns that were compiled.
+    /// The order of the patterns is the same as the order of the compiled patterns.
+    /// The indexes of the raw patterns and the compiled patterns match.
     #[getter]
-    fn get_raw_patterns(&self) -> Vec<String> {
+    fn raw_patterns(&self) -> Vec<String> {
         self.raw_patterns.clone()
     }
 
@@ -46,7 +73,7 @@ impl RegexEngine {
     ///     
     /// ### Returns
     /// A list of indexes of the patterns that matched the content.
-    fn get_pattern_matches(&self, content: String) -> Vec<usize> {
+    fn search(&self, content: String) -> Vec<usize> {
         self.compiled_patterns
             .par_iter()
             .enumerate()

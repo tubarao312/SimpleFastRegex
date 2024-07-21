@@ -1,35 +1,54 @@
 from typing import List
 
 class RegexEngine:
-    raw_patterns: List[str]
-    compiled_patterns: List
+    """
+    RegexEngine is a class that compiles and manages a set of regular expression patterns.
 
-    def __init__(self, raw_patterns: List[str]) -> None:
+    Attributes:
+        raw_patterns (List[str]): A list of raw patterns as strings.
+        compiled_patterns (List[re.Pattern]): A list of compiled regex patterns.
+    """
+
+    def __init__(self) -> None:
         """
-        Creates a new RegexEngine object.
+        Initializes a new instance of RegexEngine.
         
-        Arguments:
-        raw_patterns -- A list of raw Regex patterns to compile.
+        The `raw_patterns` attribute is initialized as an empty list to store raw regex patterns.
+        The `compiled_patterns` attribute is initialized as an empty list to store compiled regex patterns.
         """
         ...
 
-    def get_raw_patterns(self) -> List[str]:
+    def add_patterns(self, patterns: List[str], escape: bool) -> int:
+        """
+        Adds a list of patterns to the RegexEngine object. The patterns are compiled and stored in the object.
+
+        Args:
+            patterns (List[str]): A list of raw regex patterns to compile.
+            escape (bool): A boolean flag to escape the patterns before compiling.
+
+        Returns:
+            int: The number of patterns that were successfully compiled.
+        """
+        ...
+        
+    @property
+    def raw_patterns(self) -> List[str]:
         """
         Returns the raw patterns that were compiled.
-        
+
         Returns:
-        A list of raw patterns.
+            List[str]: A list of raw patterns that were compiled. The order of the patterns is the same as the order of the compiled patterns. The indexes of the raw patterns and the compiled patterns match.
         """
         ...
 
-    def get_pattern_matches(self, content: str) -> List[int]:
+    def search(self, content: str) -> List[int]:
         """
         Runs the compiled patterns against the provided content.
-        
-        Arguments:
-        content -- The content to match against.
-        
+
+        Args:
+            content (str): The content to match against.
+
         Returns:
-        A list of indexes of the patterns that matched the content.
+            List[int]: A list of indexes of the patterns that matched the content.
         """
         ...
